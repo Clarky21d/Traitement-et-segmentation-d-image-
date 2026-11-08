@@ -4,7 +4,7 @@ from array import array
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-IMAGE = os.path.join(BASE_DIR, "image.png")
+IMAGE =  "./image_2.png"
 
 def question1():
     img = Image.open(IMAGE).convert('RGB')
@@ -101,12 +101,12 @@ def question4():
                         n += 1
             flou.putpixel((x, y), (somme_r // n, somme_g // n, somme_b // n))
 
-    flou.save(os.path.join(BASE_DIR, "flou.png"), "PNG")
+    flou.save("./flou.png", "PNG")
     flou.show()
 
 
-if __name__ == "__main__":
-    question1()
-    question2()
-    question3()
-    question4()
+
+question1()
+question2()
+question3()
+question4()
