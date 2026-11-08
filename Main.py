@@ -31,7 +31,7 @@ def question2():
     img1 = Image.open(IMAGE).convert('RGB')
     w, h = img1.size
     img2 = Image.new('RGB', (w, h), 'white')
-
+                 
     for y in range(h):
         for x in range(w):
             img2.putpixel(
@@ -82,59 +82,27 @@ def question3(seuil=200):
     edges.show()
 
 
-def question4(rayon=5):
+def question4():
     img = Image.open(IMAGE).convert('RGB')
     w, h = img.size
-    px = img.load()
-    W = w + 1
-
-    S = [
-        array('q', [0]) * (W * (h + 1))
-        for _ in range(3)
-    ]
+    flou = Image.new('RGB', (w, h), 'white')
 
     for y in range(h):
-        somme = [0, 0, 0]
-
         for x in range(w):
-            p = px[x, y]
+            somme_r, somme_g, somme_b = 0, 0, 0
+            n = 0
+            for yi in range(y - 5, y + 6):
+                for xi in range(x - 5, x + 6):
+                    if 0 <= xi < w and 0 <= yi < h:
+                        r, g, b = img.getpixel((xi, yi))
+                        somme_r += r
+                        somme_g += g
+                        somme_b += b
+                        n += 1
+            flou.putpixel((x, y), (somme_r // n, somme_g // n, somme_b // n))
 
-            for c in range(3):
-                somme[c] += p[c]
-                S[c][(y + 1) * W + x + 1] = (
-                    S[c][y * W + x + 1] + somme[c]
-                )
-
-    res = Image.new('RGB', (w, h))
-    out = res.load()
-
-    for y in range(h):
-        y0 = max(0, y - rayon)
-        y1 = min(h, y + rayon + 1)
-
-        for x in range(w):
-            x0 = max(0, x - rayon)
-            x1 = min(w, x + rayon + 1)
-
-            n = (x1 - x0) * (y1 - y0)
-            valeurs = []
-
-            for c in range(3):
-                s = S[c]
-
-                total = (
-                    s[y1 * W + x1]
-                    - s[y0 * W + x1]
-                    - s[y1 * W + x0]
-                    + s[y0 * W + x0]
-                )
-
-                valeurs.append(total // n)
-
-            out[x, y] = tuple(valeurs)
-
-    res.save(os.path.join(BASE_DIR, "flou.png"), "PNG")
-    res.show()
+    flou.save(os.path.join(BASE_DIR, "flou.png"), "PNG")
+    flou.show()
 
 
 if __name__ == "__main__":
